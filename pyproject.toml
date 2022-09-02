@@ -1,15 +1,16 @@
 [tool.poetry]
 name = "starter-fastapi-celery"
 version = "0.1.0"
-description = "Starter for FastAPI with Celery"
-authors = ["José Carlos Paiva <josepaiva94@gmail.com>"]
+description = ""
+authors = ["Abneet Wats <abneetwats24@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
-fastapi = "^0.61.0"
-hypercorn = "^0.10.2"
-celery = "^4.4.7"
-redis = "^3.5.3"
+python = "^3.8"
+fastapi = "^0.81.0"
+celery = "^5.2.7"
+uvicorn = "^0.18.3"
+flower = "^1.2.0"
+redis = "^4.3.4"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.3"

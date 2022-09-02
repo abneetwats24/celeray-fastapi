@@ -1,11 +1,18 @@
 import logging
 
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import FastAPI
+from app.worker.celery_worker import create_order, t_status
 
-from worker.celery_app import celery_app
 
 
 log = logging.getLogger(__name__)
+
+from pydantic import BaseModel
+# Pydantic BaseModel
+# Order class model for request body
+class Order(BaseModel):
+    customer_name: str
+    order_quantity: int
 
 app = FastAPI()
 
@@ -18,12 +25,14 @@ def background_on_message(task):
     log.warning(task.get(on_message=celery_on_message, propagate=False))
 
 
-@app.get('/{word}')
-async def root(word: str, background_task: BackgroundTasks):
-    task_name = 'app.worker.celery_worker.test_celery'
+@app.post('/order')
+def add_order(order: Order):
+    # use delay() method to call the celery task
+    task = create_order.delay(order.customer_name, order.order_quantity)
+    return {"message": "Order Received! Thank you for your patience.","uuid":task.id}
 
-    task = celery_app.send_task(task_name, args=[word])
-    background_task.add_task(background_on_message, task)
-    print(task)
+@app.get('/order')
+def get_order_status(uuid:str):
+    task = t_status(uuid)
+    return {"state":task.state,"result":task.result}
 
-    return {'message': 'Word received'}

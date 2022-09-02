@@ -30,6 +30,6 @@ celery_app = Celery(
     )
 )
 celery_app.conf.task_routes = {
-    'app.worker.celery_worker.test_celery': 'test-queue'}
+    'app.worker.celery_worker.create_order': 'create-order'}
 
 celery_app.conf.update(task_track_started=True)

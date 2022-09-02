@@ -33,28 +33,23 @@ services:
   api:
     build:
      context: .
-     dockerfile: ./docker/api/Dockerfile
-    env_file: docker/api/.env
+     dockerfile: Dockerfile
+    env_file: .env
     ports:
       - "8000:8000"
     depends_on:
       - rabbitmq
       - redis
-    volumes:
-      - "./app/:/app"
-    command: "poetry run hypercorn app/main:app --bind 0.0.0.0:8000 --reload"
 
   worker:
     build:
       context: .
-      dockerfile: ./docker/api/Dockerfile
-    env_file: docker/worker/.env
+      dockerfile: Dockerfile
+    env_file: .env
     depends_on:
       - rabbitmq
       - redis
-    volumes:
-      - "./app/:/app"
-    command: "poetry run celery worker -A app.worker.celery_worker -l info -Q test-queue -c 1"
+    command: "celery -A app.worker.celery_worker worker --loglevel=info -Q create-order -c 1"
 
 volumes:
   rabbitmq_data:
